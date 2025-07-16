@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="quantum-dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VSQL Quantum Interface</title>
+    <style>
+        /* Quantum CSS - Minimal Version */
+        :root {
+            --q-primary: #6e48aa;
+            --q-secondary: #9d50bb;
+            --q-accent: #4776e6;
+            --q-dark: #1a1a2e;
+            --q-light: #f8f9fa;
+            --q-success: #4caf50;
+            --q-warning: #ff9800;
+            --q-danger: #f44336;
+            --q-info: #2196f3;
+        }
+        
+        /* Base Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f5f5f5; color: #333; line-height: 1.6; }
+        
+        /* Layout */
+        .app { display: flex; min-height: 100vh; }
+        
+        /* Sidebar */
+        .sidebar { 
+            width: 220px; background: var(--q-dark); color: white; 
+            display: flex; flex-direction: column;
+        }
+        .sidebar-header { 
+            padding: 1rem; display: flex; justify-content: space-between; 
+            align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .logo { font-size: 1.3rem; font-weight: bold; }
+        .accent { color: var(--q-accent); }
+        .sidebar-nav { flex: 1; padding: 1rem 0; }
+        .sidebar-nav ul { list-style: none; }
+        .nav-item a {
+            display: flex; align-items: center; padding: 0.7rem 1rem; 
+            color: rgba(255,255,255,0.7); text-decoration: none;
+        }
+        .nav-item a:hover { background: rgba(255,255,255,0.05); color: white; }
+        .nav-item.active a { background: var(--q-primary); color: white; }
+        .nav-icon { margin-right: 0.7rem; width: 20px; text-align: center; }
+        
+        /* Main Content */
+        .main { flex: 1; display: flex; flex-direction: column; }
+        .topbar {
+            padding: 0.7rem 1.5rem; background: white; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .page-title { font-size: 1.2rem; font-weight: 600; }
+        .content { flex: 1; padding: 1.5rem; background: #f9f9f9; }
+        
+        /* Grid & Cards */
+        .grid { display: grid; gap: 1rem; }
+        .grid-cols-1 { grid-template-columns: 1fr; }
+        @media (min-width: 768px) {
+            .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+        }
+        .col-span-2 { grid-column: span 2; }
+        .card { 
+            background: white; border-radius: 6px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden;
+        }
+        .card-header { 
+            padding: 1rem; border-bottom: 1px solid #eee; 
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .card-body { padding: 1rem; }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.5rem 1rem; border-radius: 4px; border: none;
+            font-weight: 500; cursor: pointer; display: inline-flex;
+            align-items: center; gap: 0.5rem;
+        }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
+        .btn-primary { background: var(--q-primary); color: white; }
+        .btn-secondary { background: var(--q-secondary); color: white; }
+        
+        /* Table */
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 0.7rem; text-align: left; border-bottom: 1px solid #eee; }
+        .table th { background: #f5f5f5; font-weight: 600; }
+        .table-striped tr:nth-child(even) { background: #f9f9f9; }
+        
+        /* Code Editor */
+        .code-editor {
+            background: var(--q-dark); color: #f8f8f2; border-radius: 4px;
+            padding: 1rem; font-family: monospace; min-height: 200px;
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-block; padding: 0.2rem 0.5rem;
+            font-size: 0.75rem; font-weight: 600; border-radius: 4px;
+        }
+        .badge-success { background: var(--q-success); color: white; }
+        
+        /* Utility Classes */
+        .hidden { display: none; }
+        .text-center { text-align: center; }
+        .mt-2 { margin-top: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">VSQL<span class="accent">Q</span></div>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active">
+                        <a href="#dashboard">
+                            <span class="nav-icon">📊</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#query">
+                            <span class="nav-icon">🔍</span>
+                            <span>Query Builder</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#visualize">
+                            <span class="nav-icon">📈</span>
+                            <span>Visualizer</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#schema">
+                            <span class="nav-icon">🗃️</span>
+                            <span>Schema</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="main">
+            <header class="topbar">
+                <h1 class="page-title">VSQL Query Interface</h1>
+                <div>
+                    <button class="btn btn-primary btn-sm" id="execute-btn">
+                        <span>▶</span> Execute
+                    </button>
+                </div>
+            </header>
+            
+            <div class="content">
+                <div class="grid grid-cols-1 grid-cols-3">
+                    <!-- Query Editor -->
+                    <div class="card col-span-2">
+                        <div class="card-header">
+                            <h3>VSQL Query Editor</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="code-editor" id="query-editor">
+-- Sample VSQL Query
+SELECT * FROM virtual_data
+WHERE category = 'analytics'
+AND created_at > NOW() - INTERVAL '7 days'
+ORDER BY views DESC
+LIMIT 100;
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Results -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Query Results</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="results-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Value</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>users</td>
+                                            <td>1,024</td>
+                                            <td><span class="badge badge-success">active</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>products</td>
+                                            <td>542</td>
+                                            <td><span class="badge badge-success">active</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Visualization -->
+                    <div class="card col-span-3">
+                        <div class="card-header">
+                            <h3>Data Visualization</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="visualization">
+                                <canvas id="chart" width="100%" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Simple JavaScript for demo purposes
+        document.addEventListener('DOMContentLoaded', function() {
+            // Execute button click handler
+            document.getElementById('execute-btn').addEventListener('click', function() {
+                const btn = this;
+                btn.innerHTML = '⏳ Executing...';
+                
+                // Simulate query execution
+                setTimeout(function() {
+                    btn.innerHTML = '▶ Execute';
+                    alert('Query executed successfully!');
+                    
+                    // In a real app, you would update the results table here
+                }, 1500);
+            });
+            
+            // Simple chart rendering
+            const canvas = document.getElementById('chart');
+            if (canvas.getContext) {
+                const ctx = canvas.getContext('2d');
+                
+                // Draw a simple bar chart
+                ctx.fillStyle = '#6e48aa';
+                ctx.fillRect(50, 250, 60, -150);  // Bar 1
+                ctx.fillStyle = '#9d50bb';
+                ctx.fillRect(150, 250, 60, -100); // Bar 2
+                ctx.fillStyle = '#4776e6';
+                ctx.fillRect(250, 250, 60, -200); // Bar 3
+                
+                // Add labels
+                ctx.fillStyle = '#333';
+                ctx.font = '12px sans-serif';
+                ctx.fillText('Users', 60, 270);
+                ctx.fillText('Products', 160, 270);
+                ctx.fillText('Orders', 260, 270);
+                
+                // Y-axis labels
+                ctx.fillText('200', 20, 100);
+                ctx.fillText('100', 20, 200);
+                ctx.fillText('0', 20, 250);
+            }
+        });
+    </script>
+</body>
+</html>
