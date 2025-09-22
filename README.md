@@ -23,7 +23,7 @@ pip install -r requirements.txt
 ## 🛠️ Usage
 
 ```bash
-python vsql.py
+python main.py
 ```
 
 ## 📄 License
