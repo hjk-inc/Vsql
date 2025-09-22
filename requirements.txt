@@ -1,7 +1,28 @@
-customtkinter
-pandas
-matplotlib
-scikit-learn
-seaborn
-tensorflow
-torch
+pip install customtkinter
+pip install numpy
+pip install pandas
+pip install scikit-learn
+pip install xgboost
+pip install lightgbm
+pip install catboost
+pip install tensorflow
+pip install torch torchvision torchaudio
+pip install matplotlib
+pip install plotly
+pip install seaborn
+pip install psutil
+pip install joblib
+pip install dill
+pip install shap
+pip install eli5
+pip install lime
+pip install scipy
+pip install statsmodels
+pip install pyodbc
+pip install mysql-connector-python
+pip install psycopg2-binary
+pip install cx_Oracle
+pip install cryptography
+pip install pillow
+pip install requests
+pip install pyyaml
