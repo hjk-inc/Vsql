@@ -1,274 +1,232 @@
+```html
 <!DOCTYPE html>
-<html lang="en" data-theme="quantum-dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VSQL Quantum Interface</title>
+    <title>VSQL - HJK Inc</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-        /* Quantum CSS - Minimal Version */
-        :root {
-            --q-primary: #6e48aa;
-            --q-secondary: #9d50bb;
-            --q-accent: #4776e6;
-            --q-dark: #1a1a2e;
-            --q-light: #f8f9fa;
-            --q-success: #4caf50;
-            --q-warning: #ff9800;
-            --q-danger: #f44336;
-            --q-info: #2196f3;
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
         }
-        
-        /* Base Styles */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f5f5f5; color: #333; line-height: 1.6; }
-        
-        /* Layout */
-        .app { display: flex; min-height: 100vh; }
-        
-        /* Sidebar */
-        .sidebar { 
-            width: 220px; background: var(--q-dark); color: white; 
-            display: flex; flex-direction: column;
+
+        header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
         }
-        .sidebar-header { 
-            padding: 1rem; display: flex; justify-content: space-between; 
-            align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+
+        #queryResults {
+            min-height: 100px;
         }
-        .logo { font-size: 1.3rem; font-weight: bold; }
-        .accent { color: var(--q-accent); }
-        .sidebar-nav { flex: 1; padding: 1rem 0; }
-        .sidebar-nav ul { list-style: none; }
-        .nav-item a {
-            display: flex; align-items: center; padding: 0.7rem 1rem; 
-            color: rgba(255,255,255,0.7); text-decoration: none;
+
+        #dataChart {
+            max-width: 100%;
+            height: 300px;
         }
-        .nav-item a:hover { background: rgba(255,255,255,0.05); color: white; }
-        .nav-item.active a { background: var(--q-primary); color: white; }
-        .nav-icon { margin-right: 0.7rem; width: 20px; text-align: center; }
-        
-        /* Main Content */
-        .main { flex: 1; display: flex; flex-direction: column; }
-        .topbar {
-            padding: 0.7rem 1.5rem; background: white; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .page-title { font-size: 1.2rem; font-weight: 600; }
-        .content { flex: 1; padding: 1.5rem; background: #f9f9f9; }
-        
-        /* Grid & Cards */
-        .grid { display: grid; gap: 1rem; }
-        .grid-cols-1 { grid-template-columns: 1fr; }
-        @media (min-width: 768px) {
-            .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
-        }
-        .col-span-2 { grid-column: span 2; }
-        .card { 
-            background: white; border-radius: 6px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden;
-        }
-        .card-header { 
-            padding: 1rem; border-bottom: 1px solid #eee; 
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .card-body { padding: 1rem; }
-        
-        /* Buttons */
-        .btn {
-            padding: 0.5rem 1rem; border-radius: 4px; border: none;
-            font-weight: 500; cursor: pointer; display: inline-flex;
-            align-items: center; gap: 0.5rem;
-        }
-        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
-        .btn-primary { background: var(--q-primary); color: white; }
-        .btn-secondary { background: var(--q-secondary); color: white; }
-        
-        /* Table */
-        .table { width: 100%; border-collapse: collapse; }
-        .table th, .table td { padding: 0.7rem; text-align: left; border-bottom: 1px solid #eee; }
-        .table th { background: #f5f5f5; font-weight: 600; }
-        .table-striped tr:nth-child(even) { background: #f9f9f9; }
-        
-        /* Code Editor */
-        .code-editor {
-            background: var(--q-dark); color: #f8f8f2; border-radius: 4px;
-            padding: 1rem; font-family: monospace; min-height: 200px;
-        }
-        
-        /* Badges */
-        .badge {
-            display: inline-block; padding: 0.2rem 0.5rem;
-            font-size: 0.75rem; font-weight: 600; border-radius: 4px;
-        }
-        .badge-success { background: var(--q-success); color: white; }
-        
-        /* Utility Classes */
-        .hidden { display: none; }
-        .text-center { text-align: center; }
-        .mt-2 { margin-top: 0.5rem; }
     </style>
 </head>
-<body>
-    <div class="app">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">VSQL<span class="accent">Q</span></div>
-            </div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="nav-item active">
-                        <a href="#dashboard">
-                            <span class="nav-icon">📊</span>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#query">
-                            <span class="nav-icon">🔍</span>
-                            <span>Query Builder</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#visualize">
-                            <span class="nav-icon">📈</span>
-                            <span>Visualizer</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#schema">
-                            <span class="nav-icon">🗃️</span>
-                            <span>Schema</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        
-        <!-- Main Content -->
-        <main class="main">
-            <header class="topbar">
-                <h1 class="page-title">VSQL Query Interface</h1>
-                <div>
-                    <button class="btn btn-primary btn-sm" id="execute-btn">
-                        <span>▶</span> Execute
-                    </button>
-                </div>
-            </header>
-            
-            <div class="content">
-                <div class="grid grid-cols-1 grid-cols-3">
-                    <!-- Query Editor -->
-                    <div class="card col-span-2">
-                        <div class="card-header">
-                            <h3>VSQL Query Editor</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="code-editor" id="query-editor">
--- Sample VSQL Query
-SELECT * FROM virtual_data
-WHERE category = 'analytics'
-AND created_at > NOW() - INTERVAL '7 days'
-ORDER BY views DESC
-LIMIT 100;
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Results -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Query Results</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped" id="results-table">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Name</th>
-                                            <th>Value</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>users</td>
-                                            <td>1,024</td>
-                                            <td><span class="badge badge-success">active</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>products</td>
-                                            <td>542</td>
-                                            <td><span class="badge badge-success">active</span></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Visualization -->
-                    <div class="card col-span-3">
-                        <div class="card-header">
-                            <h3>Data Visualization</h3>
-                        </div>
-                        <div class="card-body">
-                            <div id="visualization">
-                                <canvas id="chart" width="100%" height="300"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
+<body class="bg-gray-100 font-sans">
+    <header class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-16 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold">VSQL by HJK Inc</h1>
+        <p class="mt-4 text-lg md:text-xl">An all-in-one database tool with ML visualization and SQL/NoSQL support</p>
+    </header>
 
+    <main class="max-w-6xl mx-auto p-6">
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-10">
+            <h2 class="text-2xl font-semibold mb-4">About VSQL</h2>
+            <p class="text-gray-700 mb-4">
+                VSQL is a powerful, open-source database management tool designed for seamless integration of SQL and NoSQL databases with machine learning visualization capabilities. Built by HJK Inc, VSQL empowers developers, data scientists, and educators to query, analyze, and visualize data efficiently, even in offline environments using our Internet Learning Tech (ILT) framework.
+            </p>
+            <a href="https://github.com/hjk-inc/Vsql" class="inline-block bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700">View on GitHub</a>
+        </section>
+
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-10">
+            <h2 class="text-2xl font-semibold mb-4">Key Features</h2>
+            <ul class="list-none space-y-4">
+                <li class="p-4 bg-gray-50 rounded">
+                    <strong>Unified Database Access</strong>: Seamless support for SQL (MySQL, PostgreSQL, SQLite) and NoSQL (MongoDB, Redis) databases.
+                </li>
+                <li class="p-4 bg-gray-50 rounded">
+                    <strong>ML Visualization</strong>: Integrated tools for clustering, regression, and data visualization using scikit-learn and matplotlib.
+                </li>
+                <li class="p-4 bg-gray-50 rounded">
+                    <strong>Offline ILT Integration</strong>: Leverage pre-fetched data for offline querying with Intel oneAPI optimizations.
+                </li>
+                <li class="p-4 bg-gray-50 rounded">
+                    <strong>Query Builder</strong>: Intuitive GUI for constructing complex SQL/NoSQL queries.
+                </li>
+                <li class="p-4 bg-gray-50 rounded">
+                    <strong>Performance Benchmarking</strong>: Measure query execution time and resource usage.
+                </li>
+                <li class="p-4 bg-gray-50 rounded">
+                    <strong>Python Integration</strong>: Full API support for NumPy, pandas, and other scientific libraries.
+                </li>
+            </ul>
+        </section>
+
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-10">
+            <h2 class="text-2xl font-semibold mb-4">Interactive Demo</h2>
+            <p class="text-gray-700 mb-4">Try a simplified version of VSQL's query and visualization capabilities.</p>
+            <div class="bg-gray-50 p-4 rounded">
+                <h3 class="text-lg font-semibold">SQL Query Simulator</h3>
+                <p class="text-gray-600 mb-2">Enter a SQL query to simulate results and visualization:</p>
+                <input id="sqlQuery" type="text" placeholder="e.g., SELECT * FROM data WHERE value > 50" class="w-full p-2 border rounded mb-4" aria-label="SQL query input">
+                <button onclick="runQuery()" class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700">Run Query</button>
+                <div id="queryResults" class="mt-4 p-4 bg-white border rounded"></div>
+                <canvas id="dataChart" class="mt-4"></canvas>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-lg shadow-lg p-6 mb-10">
+            <h2 class="text-2xl font-semibold mb-4">Explore HJK Inc Projects</h2>
+            <ul class="list-none space-y-4">
+                <li class="p-4 bg-gray-50 rounded">
+                    <a href="https://github.com/hjk-inc/hjkai-" class="text-indigo-600 hover:underline">HJKAI</a>: Offline AI research assistant with ILT for educational use.
+                </li>
+                <li class="p-4 bg-gray-50 rounded">
+                    <a href="https://hjk-inc.github.io/HJK-QUANTUM-/" class="text-indigo-600 hover:underline">HJK-QUANTUM-</a>: Quantum computing simulation environment.
+                </li>
+                <li class="p-4 bg-gray-50 rounded">
+                    <a href="https://github.com/hjk-inc/Malware-with-python" class="text-indigo-600 hover:underline">Malware-with-python</a>: Ethical cybersecurity learning tools.
+                </li>
+            </ul>
+            <div class="text-center mt-6">
+                <a href="https://hjk-inc.github.io" class="inline-block bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700">Visit HJK Inc</a>
+            </div>
+        </section>
+
+        <section class="text-center">
+            <h2 class="text-2xl font-semibold mb-4">Get Involved</h2>
+            <p class="text-gray-700 mb-4">VSQL is open-source under the MIT License. Contribute to our mission of advancing educational technology!</p>
+            <div class="space-x-4">
+                <a href="https://github.com/hjk-inc/Vsql" class="inline-block bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-900">GitHub</a>
+                <a href="https://x.com/hjkinc" class="inline-block bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">Follow on X</a>
+                <a href="mailto:info@hjkinc.com" class="inline-block bg-green-600 text-white py-2 px-4 rounded hover:bg-green-500">Contact Us</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center py-6">
+        <p>&copy; 2025 HJK Inc. Built with ❤️ for open-source AI. | <a href="https://github.com/hjk-inc/Vsql" class="text-indigo-300 hover:underline">Source</a></p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script>
-        // Simple JavaScript for demo purposes
-        document.addEventListener('DOMContentLoaded', function() {
-            // Execute button click handler
-            document.getElementById('execute-btn').addEventListener('click', function() {
-                const btn = this;
-                btn.innerHTML = '⏳ Executing...';
-                
-                // Simulate query execution
-                setTimeout(function() {
-                    btn.innerHTML = '▶ Execute';
-                    alert('Query executed successfully!');
-                    
-                    // In a real app, you would update the results table here
-                }, 1500);
-            });
-            
-            // Simple chart rendering
-            const canvas = document.getElementById('chart');
-            if (canvas.getContext) {
-                const ctx = canvas.getContext('2d');
-                
-                // Draw a simple bar chart
-                ctx.fillStyle = '#6e48aa';
-                ctx.fillRect(50, 250, 60, -150);  // Bar 1
-                ctx.fillStyle = '#9d50bb';
-                ctx.fillRect(150, 250, 60, -100); // Bar 2
-                ctx.fillStyle = '#4776e6';
-                ctx.fillRect(250, 250, 60, -200); // Bar 3
-                
-                // Add labels
-                ctx.fillStyle = '#333';
-                ctx.font = '12px sans-serif';
-                ctx.fillText('Users', 60, 270);
-                ctx.fillText('Products', 160, 270);
-                ctx.fillText('Orders', 260, 270);
-                
-                // Y-axis labels
-                ctx.fillText('200', 20, 100);
-                ctx.fillText('100', 20, 200);
-                ctx.fillText('0', 20, 250);
+        const sampleData = [
+            { id: 1, value: 60, category: "A" },
+            { id: 2, value: 45, category: "B" },
+            { id: 3, value: 75, category: "A" },
+            { id: 4, value: 30, category: "C" },
+        ];
+
+        let chartInstance = null;
+
+        function runQuery() {
+            const query = document.getElementById("sqlQuery").value.trim();
+            const resultsDiv = document.getElementById("queryResults");
+
+            if (!query) {
+                resultsDiv.innerHTML = "<p class='text-red-600'>Please enter a SQL query.</p>";
+                return;
             }
-        });
+
+            // Simulate SQL query processing
+            let filteredData = sampleData;
+            if (query.includes("WHERE")) {
+                const match = query.match(/WHERE\s+value\s*>\s*(\d+)/i);
+                if (match) {
+                    const threshold = parseInt(match[1]);
+                    filteredData = sampleData.filter(row => row.value > threshold);
+                }
+            }
+
+            // Display results
+            resultsDiv.innerHTML = `
+                <p class='text-gray-700'>Query: ${query}</p>
+                <pre class='bg-gray-100 p-2 rounded'>${JSON.stringify(filteredData, null, 2)}</pre>
+            `;
+
+            // Update chart
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+            const ctx = document.getElementById("dataChart").getContext("2d");
+            chartInstance = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: filteredData.map(row => `ID ${row.id}`),
+                    datasets: [{
+                        label: "Values",
+                        data: filteredData.map(row => row.value),
+                        backgroundColor: "rgba(102, 126, 234, 0.6)",
+                        borderColor: "rgba(102, 126, 234, 1)",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: "Value" }
+                        },
+                        x: {
+                            title: { display: true, text: "Data Points" }
+                        }
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
+```
+
+### Step 2: Supporting Files
+To complete the GitHub Pages setup, include `README.md`, `LICENSE`, and `CONTRIBUTING.md`. These remain unchanged from the previous response but are included here for completeness.
+
+<xaiArtifact artifact_id="245442e6-cd98-4e60-b2eb-b9501aa24133" artifact_version_id="87aa22a3-3b78-42d5-8a7b-1d0070868663" title="README.md" contentType="text/markdown">
+```markdown
+# VSQL Website
+
+This repository hosts the static website for VSQL, an open-source database tool by HJK Inc, hosted at `https://hjk-inc.github.io/Vsql`.
+
+## Setup for GitHub Pages
+
+1. **Clone Repository**:
+   ```bash
+   git clone https://github.com/hjk-inc/Vsql.git
+   cd Vsql
+   ```
+
+2. **Create `docs` Folder**:
+   ```bash
+   mkdir docs
+   mv index.html docs/
+   ```
+
+3. **Configure GitHub Pages**:
+   - Go to `https://github.com/hjk-inc/Vsql/settings/pages`.
+   - Set **Source** to `main` branch and `/docs` folder.
+   - Save and wait for deployment (~1-2 minutes).
+   - Access at `https://hjk-inc.github.io/Vsql`.
+
+4. **Local Testing**:
+   ```bash
+   python -m http.server 8000 --directory docs
+   ```
+   - Open `http://localhost:8000`.
+
+## Files
+- `docs/index.html`: Main landing page with embedded CSS and JavaScript.
+- `LICENSE`: MIT license.
+- `CONTRIBUTING.md`: Contribution guidelines.
+
+## Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+## License
+MIT License. See [LICENSE](LICENSE).
+```
